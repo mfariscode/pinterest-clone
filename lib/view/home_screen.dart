@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                             width: 10.0,
                           ),
                           const Text(
-                            'Poular Images',
+                            'Popular Images',
                             style: TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.white,
