@@ -52,7 +52,7 @@ class _PopularScreenState extends State<PopularScreen> {
                     return GestureDetector(
                       onTap: () {
                         snapshot.downloadImage(
-                            snapshot.images[index]['src']['original'],
+                            snapshot.photosModel!.photos[index].src.original,
                             context);
                       },
                       child: Column(
