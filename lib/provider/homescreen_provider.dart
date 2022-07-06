@@ -9,59 +9,63 @@ import '../utils/show_snackbar.dart';
 
 class HomeProvider extends ChangeNotifier {
 
-
   var api = "https://api.pexels.com/v1/curated?per_page=80";
   List images = [];
   int page = 1;
   PhotosModel? photosModel;
 
+  ////For Api Fetching
+
   Future getImages() async {
     var url = Uri.parse(api);
     debugPrint(url.toString());
-    await http.get(url, headers: {
+    var response = await http.get(url, headers: {
       'Authorization':
           '563492ad6f91700001000001c1fb25ae0b524b77a4a8a739b99dde57'
-    }).then((value) {
-      Map result = jsonDecode(value.body);
-      print(result);
-      images = result['photos'];
     });
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      photosModel = PhotosModel.fromJson(jsonResponse);
+    }
+    else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
     notifyListeners();
   }
 
+  ////For Lazy Loading
+
   Future loadMore() async {
     page = page + 1;
-    String url = 'https://api.pexels.com/v1/curated?per_page=80&page=$page' ;
-    var newUrl = Uri.parse(url);
-    await http.get(newUrl, headers: {
+    String url = 'https://api.pexels.com/v1/curated?per_page=80&page=$page';
+    var response = await http.get(Uri.parse(url), headers: {
       'Authorization':
       '563492ad6f91700001000001c1fb25ae0b524b77a4a8a739b99dde57'
-    }).then((value) {
-      Map result = jsonDecode(value.body);
-      images.addAll(result['photos']);
-      notifyListeners();
     });
+    if (response.statusCode == 200) {
+      var jsonResponse = jsonDecode(response.body);
+      photosModel = PhotosModel.fromJson(jsonResponse);
+    }
+    else {
+      print('Request failed with status: ${response.statusCode}.');
+    }
     notifyListeners();
   }
+
+
+  ////For Downloading Image
+
 
   Future downloadImage(url, context) async {
     try {
       var imageId = await ImageDownloader.downloadImage(url);
       if (imageId == null) {
-        return ;
+        return;
       }
       var path = await ImageDownloader.findPath(imageId);
       showSnackBar(message: 'Image Downloaded', context: context);
     } on PlatformException catch (error) {
       print(error);
     }
-
   }
-
-
-
-
 }
-
-
-

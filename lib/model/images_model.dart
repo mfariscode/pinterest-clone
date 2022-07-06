@@ -10,6 +10,38 @@ String photosModelToJson(PhotosModel data) => json.encode(data.toJson());
 
 class PhotosModel {
   PhotosModel({
+    required this.page,
+    required this.perPage,
+    required this.photos,
+    required this.totalResults,
+    required this.nextPage,
+  });
+
+  int page;
+  int perPage;
+  List<Photo> photos;
+  int totalResults;
+  String nextPage;
+
+  factory PhotosModel.fromJson(Map<String, dynamic> json) => PhotosModel(
+    page: json["page"],
+    perPage: json["per_page"],
+    photos: List<Photo>.from(json["photos"].map((x) => Photo.fromJson(x))),
+    totalResults: json["total_results"],
+    nextPage: json["next_page"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "page": page,
+    "per_page": perPage,
+    "photos": List<dynamic>.from(photos.map((x) => x.toJson())),
+    "total_results": totalResults,
+    "next_page": nextPage,
+  };
+}
+
+class Photo {
+  Photo({
     required this.id,
     required this.width,
     required this.height,
@@ -35,7 +67,7 @@ class PhotosModel {
   bool liked;
   String alt;
 
-  factory PhotosModel.fromJson(Map<String, dynamic> json) => PhotosModel(
+  factory Photo.fromJson(Map<String, dynamic> json) => Photo(
     id: json["id"],
     width: json["width"],
     height: json["height"],
